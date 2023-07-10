@@ -1,0 +1,7 @@
+.idea
+mysql
+standalone-logs
+nacos_config.sql
+bridge_monitor.sql
+
+bridge_monitor_tenant.sql

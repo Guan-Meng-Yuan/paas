@@ -1,0 +1,97 @@
+services:
+  mysql:
+    container_name: mysql
+    image: mysql
+    command:
+      - --default-authentication-plugin=mysql_native_password
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_general_ci
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: Aa123456#
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
+  nacos:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos
+    env_file:
+      - nacos.env
+    volumes:
+      - ./nacos-log:/home/nacos/logs
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    restart: always
+    links:
+      - mysql
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASS}
+  elasticsearch:
+    image: elasticsearch:8.8.1
+    container_name: elasticsearch
+    ports:
+      - 9200:9200
+      - 9300:9300
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: -Xms512m -Xmx1g
+      bootstrap.memory_lock: true
+      xpack.security.enabled: false
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200 || exit 1" ]
+      interval: 1s
+      timeout: 5s
+      retries: 120
+
+  skywalking-oap:
+    image: apache/skywalking-oap-server
+    container_name: skywalking-oap
+    ports:
+      - 11800:11800
+      - 12800:12800
+    restart: always
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    links:
+      - elasticsearch
+    healthcheck:
+      test: [ 'CMD-SHELL',"/skywalking/bin/swctl ch" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      SW_STORAGE: elasticsearch
+      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
+      SW_HEALTH_CHECKER: default
+      SW_TELEMETRY: prometheus
+      JAVA_OPTS: "-Xmx1g"
+  skywalking-ui:
+    container_name: skywalking-ui
+    image: apache/skywalking-ui
+    restart: always
+    depends_on:
+      skywalking-oap:
+        condition: service_healthy
+    links:
+      - skywalking-oap
+    ports:
+      - 8080:8080
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412

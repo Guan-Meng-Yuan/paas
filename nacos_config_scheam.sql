@@ -53,7 +53,7 @@ CREATE TABLE `config_info_aggr` (
                                     `tenant_id` varchar(128) DEFAULT '' COMMENT '租户字段',
                                     PRIMARY KEY (`id`),
                                     UNIQUE KEY `uk_configinfoaggr_datagrouptenantdatum` (`data_id`,`group_id`,`tenant_id`,`datum_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='增加租户字段';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='增加租户字段';
 
 
 /******************************************/
@@ -75,7 +75,7 @@ CREATE TABLE `config_info_beta` (
                                     `encrypted_data_key` text NOT NULL COMMENT '密钥',
                                     PRIMARY KEY (`id`),
                                     UNIQUE KEY `uk_configinfobeta_datagrouptenant` (`data_id`,`group_id`,`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='config_info_beta';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='config_info_beta';
 
 /******************************************/
 /*   表名称 = config_info_tag              */
@@ -95,7 +95,7 @@ CREATE TABLE `config_info_tag` (
                                    `src_ip` varchar(50) DEFAULT NULL COMMENT 'source ip',
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `uk_configinfotag_datagrouptenanttag` (`data_id`,`group_id`,`tenant_id`,`tag_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='config_info_tag';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='config_info_tag';
 
 /******************************************/
 /*   表名称 = config_tags_relation         */
@@ -111,7 +111,7 @@ CREATE TABLE `config_tags_relation` (
                                         PRIMARY KEY (`nid`),
                                         UNIQUE KEY `uk_configtagrelation_configidtag` (`id`,`tag_name`,`tag_type`),
                                         KEY `idx_tenant_id` (`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='config_tag_relation';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='config_tag_relation';
 
 /******************************************/
 /*   表名称 = group_capacity               */
@@ -129,7 +129,7 @@ CREATE TABLE `group_capacity` (
                                   `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
                                   PRIMARY KEY (`id`),
                                   UNIQUE KEY `uk_group_id` (`group_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='集群、各Group容量信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='集群、各Group容量信息表';
 
 /******************************************/
 /*   表名称 = his_config_info              */
@@ -153,7 +153,7 @@ CREATE TABLE `his_config_info` (
                                    KEY `idx_gmt_create` (`gmt_create`),
                                    KEY `idx_gmt_modified` (`gmt_modified`),
                                    KEY `idx_did` (`data_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='多租户改造';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='多租户改造';
 
 
 /******************************************/
@@ -172,7 +172,7 @@ CREATE TABLE `tenant_capacity` (
                                    `gmt_modified` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
                                    PRIMARY KEY (`id`),
                                    UNIQUE KEY `uk_tenant_id` (`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户容量信息表';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='租户容量信息表';
 
 
 CREATE TABLE `tenant_info` (
@@ -187,7 +187,7 @@ CREATE TABLE `tenant_info` (
                                PRIMARY KEY (`id`),
                                UNIQUE KEY `uk_tenant_info_kptenantid` (`kp`,`tenant_id`),
                                KEY `idx_tenant_id` (`tenant_id`)
-) ENGINE=InnoDB DEFAULT CHARSER=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='tenant_info';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='tenant_info';
 
 CREATE TABLE `users` (
                          `username` varchar(50) NOT NULL PRIMARY KEY COMMENT 'username',

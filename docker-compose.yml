@@ -10,6 +10,7 @@ services:
       - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: Aa123456#
+      TZ: Asia/Shanghai
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
@@ -40,6 +41,7 @@ services:
       - 9200:9200
       - 9300:9300
     environment:
+      TZ: Asia/Shanghai
       discovery.type: single-node
       ES_JAVA_OPTS: -Xms512m -Xmx1g
       bootstrap.memory_lock: true
@@ -76,6 +78,7 @@ services:
       retries: 3
       start_period: 10s
     environment:
+      TZ: Asia/Shanghai
       SW_STORAGE: elasticsearch
       SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
       SW_HEALTH_CHECKER: default
@@ -93,5 +96,6 @@ services:
     ports:
       - 8080:8080
     environment:
+      TZ: Asia/Shanghai
       SW_OAP_ADDRESS: http://skywalking-oap:12800
       SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412

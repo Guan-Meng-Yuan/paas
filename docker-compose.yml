@@ -99,3 +99,12 @@ services:
       TZ: Asia/Shanghai
       SW_OAP_ADDRESS: http://skywalking-oap:12800
       SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412
+  sentinel-dashboard:
+    container_name: sentinel-dashboard
+    build:
+      dockerfile: Sentinel.Dockerfile
+    restart: always
+    ports:
+      - 8081:8080
+    environment:
+      TZ: Asia/Shanghai

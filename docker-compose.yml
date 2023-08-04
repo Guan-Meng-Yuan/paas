@@ -106,5 +106,9 @@ services:
     restart: always
     ports:
       - 8081:8080
+    links:
+      - skywalking-oap
     environment:
       TZ: Asia/Shanghai
+      SW_AGENT_COLLECTOR_BACKEND_SERVICES: skywalking-oap:11800
+      SW_AGENT_NAME: sentinel

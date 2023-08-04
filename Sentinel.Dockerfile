@@ -1,7 +1,4 @@
-FROM amd64/buildpack-deps:buster-curl as installer
-
-
-FROM openjdk:8-jre-slim
+FROM apache/skywalking-java-agent:8.16.0-java8
 
 # copy sentinel jar
 COPY sentinel-dashboard-1.8.6.jar /home/sentinel-dashboard.jar

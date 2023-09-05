@@ -4,3 +4,4 @@ standalone-logs
 nacos_config.sql
 nacos-log
 elasticsearch
+.DS_Store

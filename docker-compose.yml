@@ -10,21 +10,22 @@ services:
     volumes:
       - ./minio/data:/data
     restart: always
-  mysql:
+  db:
     container_name: mysql
     image: mysql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_general_ci
       - --lower_case_table_names=1
-    ports:
-      - 3306:3306
     environment:
       MYSQL_ROOT_PASSWORD: Aa123456#
       TZ: Asia/Shanghai
+      MYSQL_DATABASE: skywalking
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
   nacos:
     image: nacos/nacos-server:${NACOS_VERSION}
     container_name: nacos
@@ -37,7 +38,7 @@ services:
       - "9848:9848"
     restart: always
     links:
-      - mysql
+      - db
   redis:
     image: redis
     container_name: redis
@@ -45,43 +46,13 @@ services:
       - 6379:6379
     restart: always
     command: redis-server --requirepass ${REDIS_PASS}
-  elasticsearch:
-    image: elasticsearch:8.8.1
-    container_name: elasticsearch
-    ports:
-      - 9200:9200
-      - 9300:9300
-    environment:
-      TZ: Asia/Shanghai
-      discovery.type: single-node
-      ES_JAVA_OPTS: -Xms512m -Xmx1g
-      bootstrap.memory_lock: true
-      xpack.security.enabled: false
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    restart: always
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9200 || exit 1" ]
-      interval: 1s
-      timeout: 5s
-      retries: 120
 
   skywalking-oap:
     image: apache/skywalking-oap-server
     container_name: skywalking-oap
-    ports:
-      - 11800:11800
-      - 12800:12800
     restart: always
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
     links:
-      - elasticsearch
+      - db
     healthcheck:
       test: [ 'CMD-SHELL',"/skywalking/bin/swctl ch" ]
       interval: 30s
@@ -89,34 +60,37 @@ services:
       retries: 3
       start_period: 10s
     environment:
-      TZ: Asia/Shanghai
-      SW_STORAGE: elasticsearch
-      SW_STORAGE_ES_CLUSTER_NODES: elasticsearch:9200
-      SW_HEALTH_CHECKER: default
-      SW_TELEMETRY: prometheus
+      SW_STORAGE: mysql
+      SW_JDBC_URL: jdbc:mysql://db:3306/skywalking?rewriteBatchedStatements=true&allowMultiQueries=true&useSSL=false
+      SW_DATA_SOURCE_USER: root
+      SW_DATA_SOURCE_PASSWORD: Aa123456#
       JAVA_OPTS: "-Xmx1g"
+      TZ: Asia/Shanghai
+    volumes:
+      - ./libs/mysql-connector-j-8.0.33.jar:/skywalking/oap-libs/mysql-connector-java-8.0.33.jar
+    ports:
+      - 12800:12800
+      - 11800:11800
+    depends_on:
+      - db
   skywalking-ui:
+    depends_on:
+      - skywalking-oap
     container_name: skywalking-ui
     image: apache/skywalking-ui
     restart: always
-    depends_on:
-      skywalking-oap:
-        condition: service_healthy
     links:
       - skywalking-oap
-    ports:
-      - 8080:8080
     environment:
       TZ: Asia/Shanghai
       SW_OAP_ADDRESS: http://skywalking-oap:12800
-      SW_ZIPKIN_ADDRESS: http://skywalking-oap:9412
+    ports:
+      - 8080:8080
   sentinel-dashboard:
     container_name: sentinel-dashboard
     build:
       dockerfile: Sentinel.Dockerfile
     restart: always
-    ports:
-      - 8081:8080
     links:
       - skywalking-oap
     environment:

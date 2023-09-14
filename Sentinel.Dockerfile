@@ -1,7 +1,7 @@
 FROM apache/skywalking-java-agent:8.16.0-java8
 
 # copy sentinel jar
-COPY sentinel-dashboard-1.8.6.jar /home/sentinel-dashboard.jar
+COPY libs/sentinel-dashboard-1.8.6.jar /home/sentinel-dashboard.jar
 
 ENV JAVA_OPTS '-Dserver.port=8080 -Dcsp.sentinel.dashboard.server=localhost:8080'
 

@@ -77,7 +77,7 @@ services:
     depends_on:
       - skywalking-oap
     container_name: skywalking-ui
-    image: apache/skywalking-ui
+    image: apache/skywalking-ui:9.5.0
     restart: always
     links:
       - skywalking-oap

@@ -61,7 +61,7 @@ services:
       start_period: 10s
     environment:
       SW_STORAGE: mysql
-      SW_JDBC_URL: jdbc:mysql://db:3306/skywalking?rewriteBatchedStatements=true&allowMultiQueries=true&useSSL=false
+      SW_JDBC_URL: jdbc:mysql://db:3306/skywalking?rewriteBatchedStatements=true&allowMultiQueries=true
       SW_DATA_SOURCE_USER: root
       SW_DATA_SOURCE_PASSWORD: Aa123456#
       JAVA_OPTS: "-Xmx1g"

@@ -6,3 +6,4 @@ nacos-log
 elasticsearch
 .DS_Store
 minio/
+.cloudbase

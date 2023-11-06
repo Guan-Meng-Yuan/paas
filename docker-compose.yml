@@ -45,7 +45,7 @@ services:
     ports:
       - 6379:6379
     restart: always
-    command: redis-server --requirepass ${REDIS_PASS}
+#    command: redis-server --requirepass ${REDIS_PASS}
 
   skywalking-oap:
     image: apache/skywalking-oap-server

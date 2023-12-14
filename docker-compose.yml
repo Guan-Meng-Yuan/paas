@@ -97,3 +97,9 @@ services:
       TZ: Asia/Shanghai
       SW_AGENT_COLLECTOR_BACKEND_SERVICES: skywalking-oap:11800
       SW_AGENT_NAME: sentinel
+  zoo1:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    ports:
+      - 2181:2181

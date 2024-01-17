@@ -7,3 +7,4 @@ elasticsearch
 .DS_Store
 minio/
 .cloudbase
+pgdata

@@ -1,31 +1,41 @@
 services:
+  #  文件存储
   minio:
+    container_name: minio
     image: bitnami/minio
     environment:
       - MINIO_ROOT_USER=admin123
       - MINIO_ROOT_PASSWORD=admin123
+      - TZ=Asia/Shanghai
     ports:
       - 9000:9000
       - 9001:9001
     volumes:
-      - ./minio/data:/data
+      - ./minio/data:/bitnami/minio/data
     restart: always
+  #    mysql数据库
   mysql:
     container_name: mysql
     image: mysql
     command:
       - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_general_ci
+      - --collation-server=utf8mb4_unicode_ci
       - --lower_case_table_names=1
     environment:
       MYSQL_ROOT_PASSWORD: Aa123456#
       TZ: Asia/Shanghai
-      MYSQL_DATABASE: polaris_server
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+  #      redis
   redis:
     image: redis
     container_name: redis
@@ -33,7 +43,7 @@ services:
       - 6379:6379
     restart: always
   #    command: redis-server --requirepass ${REDIS_PASS}
-
+  #skywalking
   skywalking-oap:
     image: apache/skywalking-oap-server
     container_name: skywalking-oap
@@ -73,6 +83,8 @@ services:
       SW_OAP_ADDRESS: http://skywalking-oap:12800
     ports:
       - 8080:8080
+
+  #  postgres数据库
   postgres:
     image: postgis/postgis
     container_name: postgres
@@ -85,11 +97,26 @@ services:
       TZ: "Asia/Shanghai"
     volumes:
       - ./pgdata:/var/lib/postgresql/data
+
+
+  #  nacos注册中心
+  nacos:
+    image: nacos/nacos-server:${NACOS_VERSION}
+    container_name: nacos
+    env_file:
+      - ./nacos/nacos-standlone-mysql.env
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: always
   #北极星服务
   polaris-server:
     container_name: polaris-server
     hostname: polaris-server
-    image: polarismesh/polaris-server:v1.18.0-beta
+    image: polarismesh/polaris-server
     restart: always
     volumes:
       - ./polaris/server/polaris-server.yaml:/root/conf/polaris-server.yaml
@@ -116,7 +143,7 @@ services:
   polaris-console:
     container_name: polaris-console
     hostname: polaris-console
-    image: polarismesh/polaris-console:v1.15.0-beta
+    image: polarismesh/polaris-console
     restart: always
     volumes:
       - ./polaris/console/polaris-console.yaml:/root/polaris-console.yaml
@@ -131,7 +158,7 @@ services:
   polaris-limiter:
     container_name: polaris-limiter
     hostname: polaris-limiter
-    image: polarismesh/polaris-limiter:v1.0.4
+    image: polarismesh/polaris-limiter
     restart: always
     environment:
       - MY_ID=1

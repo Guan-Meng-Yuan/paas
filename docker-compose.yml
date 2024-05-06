@@ -19,7 +19,7 @@ services:
     image: mysql
     command:
       - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
+      - --collation-server=utf8mb4_general_ci
       - --lower_case_table_names=1
     environment:
       MYSQL_ROOT_PASSWORD: Aa123456#
@@ -27,7 +27,7 @@ services:
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
-      - ./init:/docker-entrypoint-initdb.d
+#      - ./init:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
     healthcheck:

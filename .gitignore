@@ -8,3 +8,4 @@ elasticsearch
 minio/
 .cloudbase
 pgdata
+data

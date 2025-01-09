@@ -11,7 +11,7 @@ services:
       - 9000:9000
       - 9001:9001
     volumes:
-      - ./minio/data:/bitnami/minio/data
+      - ./data/minio/data:/bitnami/minio/data
     restart: always
   #    mysql数据库
   mysql:
@@ -26,7 +26,7 @@ services:
       TZ: Asia/Shanghai
     restart: always
     volumes:
-      - ./mysql:/var/lib/mysql
+      - ./data/mysql:/var/lib/mysql
 #      - ./init:/docker-entrypoint-initdb.d
     ports:
       - 3306:3306
@@ -96,7 +96,7 @@ services:
       PGDATA: ./var/lib/postgresql/data
       TZ: "Asia/Shanghai"
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./data/pgdata:/var/lib/postgresql/data
 
 
   #  nacos注册中心

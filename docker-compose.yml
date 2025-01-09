@@ -8,11 +8,22 @@ services:
       - MINIO_ROOT_PASSWORD=admin123
       - TZ=Asia/Shanghai
     ports:
-      - 9000:9000
-      - 9001:9001
+      - "9000:9000"
+      - "9001:9001"
     volumes:
       - ./data/minio/data:/bitnami/minio/data
     restart: always
+#    mongo
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: qLmvU8kC6oBWSr4D
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./data/mongo:/data/db
   #    mysql数据库
   mysql:
     container_name: mysql
@@ -29,7 +40,7 @@ services:
       - ./data/mysql:/var/lib/mysql
 #      - ./init:/docker-entrypoint-initdb.d
     ports:
-      - 3306:3306
+      - "3306:3306"
     healthcheck:
       test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
       interval: 5s
@@ -40,7 +51,7 @@ services:
     image: redis
     container_name: redis
     ports:
-      - 6379:6379
+      - "6379:6379"
     restart: always
   #    command: redis-server --requirepass ${REDIS_PASS}
   #skywalking
@@ -66,8 +77,8 @@ services:
     volumes:
       - ./libs/mysql-connector-j-8.0.33.jar:/skywalking/oap-libs/mysql-connector-java-8.0.33.jar
     ports:
-      - 12800:12800
-      - 11800:11800
+      - "12800:12800"
+      - "11800:11800"
     depends_on:
       - mysql
   skywalking-ui:
@@ -82,7 +93,7 @@ services:
       TZ: Asia/Shanghai
       SW_OAP_ADDRESS: http://skywalking-oap:12800
     ports:
-      - 8080:8080
+      - "8080:8080"
 
   #  postgres数据库
   postgres:
@@ -90,7 +101,7 @@ services:
     container_name: postgres
     restart: always
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: Aa123456#
       PGDATA: ./var/lib/postgresql/data

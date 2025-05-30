@@ -27,34 +27,48 @@ services:
       - ./data/mongo:/data/db
   #    mysql数据库
   mysql:
+    image: mysql:8.0.42
     container_name: mysql
-    image: mysql:8
-    command:
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_general_ci
-      - --lower_case_table_names=1
     environment:
-      MYSQL_ROOT_PASSWORD: Aa123456#
+      # 时区上海
       TZ: Asia/Shanghai
-    restart: always
-    volumes:
-      - ./data/mysql:/var/lib/mysql
-#      - ./init:/docker-entrypoint-initdb.d
+      # root 密码
+      MYSQL_ROOT_PASSWORD: root
+      # 初始化数据库(后续的初始化sql会在这个库执行)
+      MYSQL_DATABASE: mydatabase
     ports:
       - "3306:3306"
-    healthcheck:
-      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
-      interval: 5s
-      timeout: 10s
-      retries: 10
-  #      redis
+    volumes:
+      # 数据挂载
+      - ./data/mysql/data/:/var/lib/mysql/
+      # 配置挂载
+      - ./data/mysql/conf/:/etc/mysql/conf.d/
+    command:
+      # 将mysql8.0默认密码策略 修改为 原先 策略 (mysql8.0对其默认策略做了更改 会导致密码无法匹配)
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --explicit_defaults_for_timestamp=true
+      --lower_case_table_names=1
+    privileged: true
+    network_mode: "host"
+    restart: always
   redis:
-    image: redis
+    image: redis:7.2.8
     container_name: redis
     ports:
       - "6379:6379"
-    restart: always
-  #    command: redis-server --requirepass ${REDIS_PASS}
+    environment:
+      # 时区上海
+      TZ: Asia/Shanghai
+    volumes:
+      # 配置文件
+      - ./redis/conf:/redis/config:rw
+      # 数据文件
+      - ./redis/data/:/redis/data/:rw
+    command: "redis-server /redis/config/redis.conf"
+    privileged: true
+    network_mode: "host"
   #skywalking
   skywalking-oap:
     image: apache/skywalking-oap-server
